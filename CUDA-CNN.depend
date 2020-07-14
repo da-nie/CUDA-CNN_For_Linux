@@ -1,0 +1,173 @@
+# depslib dependency file v1.0
+1592078960 source:/home/da-nie/Working/CUDA/CUDA-CNN/common/cdatastreamfile.cpp
+	"cdatastreamfile.h"
+
+1592078960 /home/da-nie/Working/CUDA/CUDA-CNN/common/cdatastreamfile.h
+	<string>
+	<memory>
+	<fstream>
+	"idatastream.h"
+
+1592078960 /home/da-nie/Working/CUDA/CUDA-CNN/common/idatastream.h
+	<stdint.h>
+	<string>
+
+1592078960 source:/home/da-nie/Working/CUDA/CUDA-CNN/common/cmatrix.cpp
+	"cmatrix.h"
+	<math.h>
+
+1592850759 /home/da-nie/Working/CUDA/CUDA-CNN/common/cmatrix.h
+	<vector>
+	"cvector.h"
+	"idatastream.h"
+	"tga.h"
+
+1592079920 /home/da-nie/Working/CUDA/CUDA-CNN/common/cvector.h
+	<vector>
+	<math.h>
+	"idatastream.h"
+
+1592078960 /home/da-nie/Working/CUDA/CUDA-CNN/common/tga.h
+	<stdio.h>
+	<stdint.h>
+
+1592078960 source:/home/da-nie/Working/CUDA/CUDA-CNN/common/craiifilein.cpp
+	"craiifilein.h"
+
+1592078960 /home/da-nie/Working/CUDA/CUDA-CNN/common/craiifilein.h
+	<stdio.h>
+	<string>
+	<fstream>
+
+1592078960 source:/home/da-nie/Working/CUDA/CUDA-CNN/common/craiifileout.cpp
+	"craiifileout.h"
+
+1592078960 /home/da-nie/Working/CUDA/CUDA-CNN/common/craiifileout.h
+	<stdio.h>
+	<string>
+	<fstream>
+
+1592078960 source:/home/da-nie/Working/CUDA/CUDA-CNN/common/cvector.cpp
+	"cvector.h"
+	<math.h>
+
+1592078960 source:/home/da-nie/Working/CUDA/CUDA-CNN/common/idatastream.cpp
+	"idatastream.h"
+	"cdatastreamfile.h"
+
+1592078960 source:/home/da-nie/Working/CUDA/CUDA-CNN/common/tga.cpp
+	"tga.h"
+	"craiifilein.h"
+	"craiifileout.h"
+	<string.h>
+
+1594126764 source:/home/da-nie/Working/CUDA/CUDA-CNN/cuda/cuda.cu
+	"cuda.cu.h"
+	<cstdio>
+	<ctime>
+	<stdio.h>
+	<stdint.h>
+	"handle_error.cu.h"
+	"ccudacnn.cu.h"
+
+1591256354 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/cuda.cu.h
+
+1592244682 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/handle_error.cu.h
+	"../system/system.h"
+
+1594220048 /home/da-nie/Working/CUDA/CUDA-CNN/system/system.h
+	<vector>
+	<string>
+
+1594744870 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudacnn.cu.h
+	<stdio.h>
+	<stdint.h>
+	<memory>
+	<string>
+	"handle_error.cu.h"
+	"ccudamatrixstorage.cu.h"
+	"../system/system.h"
+	"../common/cmatrix.h"
+	"../common/cimage.h"
+	"math/ccudaforwardconvolution.cu.h"
+	"math/ccudabackconvolution.cu.h"
+	"math/ccudabackdeconvolution.cu.h"
+	"math/ccudamaxpooling.cu.h"
+	"math/ccudamaxdepooling.cu.h"
+	"math/ccudafunction.cu.h"
+
+1594058180 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudamatrixstorage.cu.h
+	<stdio.h>
+	<stdint.h>
+	"handle_error.cu.h"
+	"../system/system.h"
+	"ccudasharedptr.cu.h"
+
+1594139720 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudasharedptr.cu.h
+	<stdio.h>
+	<stdint.h>
+	"handle_error.cu.h"
+	"../system/system.h"
+
+1594407971 /home/da-nie/Working/CUDA/CUDA-CNN/common/cimage.h
+	<vector>
+	<string>
+	"cmatrix.h"
+	"tga.h"
+
+1594653033 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudaforwardconvolution.cu.h
+	<stdio.h>
+	<stdint.h>
+	"../../common/cmatrix.h"
+	"../handle_error.cu.h"
+	"../ccudamatrixstorage.cu.h"
+	"../../system/system.h"
+
+1594652429 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudabackconvolution.cu.h
+	<stdio.h>
+	<stdint.h>
+	"../handle_error.cu.h"
+	"../ccudamatrixstorage.cu.h"
+	"../../system/system.h"
+
+1594652956 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudabackdeconvolution.cu.h
+	<stdio.h>
+	<stdint.h>
+	"../handle_error.cu.h"
+	"../ccudamatrixstorage.cu.h"
+	"../../system/system.h"
+
+1594126791 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudamaxpooling.cu.h
+	<stdio.h>
+	<stdint.h>
+	"../handle_error.cu.h"
+	"../ccudamatrixstorage.cu.h"
+	"../../system/system.h"
+
+1594058719 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudamaxdepooling.cu.h
+	<stdio.h>
+	<stdint.h>
+	"../handle_error.cu.h"
+	"../ccudamatrixstorage.cu.h"
+	"../../system/system.h"
+
+1594300503 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudafunction.cu.h
+	<stdio.h>
+	<stdint.h>
+	"../handle_error.cu.h"
+	"../ccudamatrixstorage.cu.h"
+	"../../system/system.h"
+
+1592233959 source:/home/da-nie/Working/CUDA/CUDA-CNN/main.cpp
+	"cuda/cuda.cu.h"
+	<stdio.h>
+	<stdlib.h>
+
+1594220096 source:/home/da-nie/Working/CUDA/CUDA-CNN/system/system.cpp
+	"system.h"
+	<dirent.h>
+	<string.h>
+	<sys/stat.h>
+	<sys/times.h>
+	<unistd.h>
+

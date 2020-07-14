@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="CUDA-CNN" />
+		<Option pch_mode="2" />
+		<Option compiler="nvcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/CUDA-CNN" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="nvcc" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-ccbin=g++-5" />
+					<Add option="-arch=sm_21" />
+					<Add option="-I /usr/local/cuda-8.0/include" />
+					<Add option="-L /usr/local/cuda-8.0/lib64" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="common/cdatastreamfile.cpp" />
+		<Unit filename="common/cdatastreamfile.h" />
+		<Unit filename="common/cimage.h" />
+		<Unit filename="common/cmatrix.cpp" />
+		<Unit filename="common/cmatrix.h" />
+		<Unit filename="common/craiifilein.cpp" />
+		<Unit filename="common/craiifilein.h" />
+		<Unit filename="common/craiifileout.cpp" />
+		<Unit filename="common/craiifileout.h" />
+		<Unit filename="common/cvector.cpp" />
+		<Unit filename="common/cvector.h" />
+		<Unit filename="common/idatastream.cpp" />
+		<Unit filename="common/idatastream.h" />
+		<Unit filename="common/tga.cpp" />
+		<Unit filename="common/tga.h" />
+		<Unit filename="cuda/ccudacnn.cu.h" />
+		<Unit filename="cuda/ccudamatrixstorage.cu.h" />
+		<Unit filename="cuda/ccudasharedptr.cu.h" />
+		<Unit filename="cuda/cuda.cu">
+			<Option compile="1" />
+			<Option link="1" />
+		</Unit>
+		<Unit filename="cuda/cuda.cu.h" />
+		<Unit filename="cuda/handle_error.cu.h" />
+		<Unit filename="cuda/math/ccudabackconvolution.cu.h" />
+		<Unit filename="cuda/math/ccudabackdeconvolution.cu.h" />
+		<Unit filename="cuda/math/ccudaforwardconvolution.cu.h" />
+		<Unit filename="cuda/math/ccudafunction.cu.h" />
+		<Unit filename="cuda/math/ccudamaxdepooling.cu.h" />
+		<Unit filename="cuda/math/ccudamaxpooling.cu.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="system/system.cpp" />
+		<Unit filename="system/system.h" />
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
