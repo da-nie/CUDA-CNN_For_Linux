@@ -38,6 +38,7 @@
 		<Unit filename="cuda/ccudacnn.cu.h" />
 		<Unit filename="cuda/ccudamatrixstorage.cu.h" />
 		<Unit filename="cuda/ccudasharedptr.cu.h" />
+		<Unit filename="cuda/ccudatimespent.cu.h" />
 		<Unit filename="cuda/cuda.cu">
 			<Option compile="1" />
 			<Option link="1" />
