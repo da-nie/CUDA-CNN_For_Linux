@@ -2,14 +2,14 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Release" />
-	<File name="cuda/ccudamatrixstorage.cu.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="common/cmatrix.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="23679" topLine="381" />
+			<Cursor1 position="3698" topLine="40" />
 		</Cursor>
 	</File>
-	<File name="cuda/math/ccudamaxdepooling.cu.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="cuda/math/ccudamaxpooling.cu.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10737" topLine="142" />
+			<Cursor1 position="12100" topLine="182" />
 		</Cursor>
 	</File>
 	<File name="cuda/math/ccudabackconvolution.cu.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -22,14 +22,14 @@
 			<Cursor1 position="11195" topLine="163" />
 		</Cursor>
 	</File>
-	<File name="cuda/math/ccudamaxpooling.cu.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="cuda/ccudacnn.cu.h" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="12100" topLine="182" />
+			<Cursor1 position="4073" topLine="78" />
 		</Cursor>
 	</File>
-	<File name="cuda/cuda.cu" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="cuda/math/ccudamaxdepooling.cu.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="530" topLine="0" />
+			<Cursor1 position="10737" topLine="142" />
 		</Cursor>
 	</File>
 	<File name="cuda/math/ccudaforwardconvolution.cu.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -37,14 +37,24 @@
 			<Cursor1 position="10309" topLine="171" />
 		</Cursor>
 	</File>
-	<File name="cuda/ccudacnn.cu.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="common/cmatrix.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4441" topLine="50" />
+			<Cursor1 position="1031" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="cuda/math/ccudafunction.cu.h" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="cuda/ccudamatrixstorage.cu.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="802" topLine="653" />
+			<Cursor1 position="23679" topLine="381" />
+		</Cursor>
+	</File>
+	<File name="cuda/math/ccudafunction.cu.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="21467" topLine="405" />
+		</Cursor>
+	</File>
+	<File name="cuda/cuda.cu" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="530" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
