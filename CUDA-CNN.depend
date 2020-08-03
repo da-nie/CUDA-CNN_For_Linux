@@ -16,7 +16,7 @@
 	"cmatrix.h"
 	<math.h>
 
-1592850759 /home/da-nie/Working/CUDA/CUDA-CNN/common/cmatrix.h
+1595825059 /home/da-nie/Working/CUDA/CUDA-CNN/common/cmatrix.h
 	<vector>
 	"cvector.h"
 	"idatastream.h"
@@ -79,7 +79,7 @@
 	<vector>
 	<string>
 
-1595782169 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudacnn.cu.h
+1596204677 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudacnn.cu.h
 	<stdio.h>
 	<stdint.h>
 	<memory>
@@ -96,7 +96,7 @@
 	"math/ccudamaxdepooling.cu.h"
 	"math/ccudafunction.cu.h"
 
-1594058180 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudamatrixstorage.cu.h
+1595937345 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudamatrixstorage.cu.h
 	<stdio.h>
 	<stdint.h>
 	"handle_error.cu.h"
@@ -109,13 +109,13 @@
 	"handle_error.cu.h"
 	"../system/system.h"
 
-1594407971 /home/da-nie/Working/CUDA/CUDA-CNN/common/cimage.h
+1595920533 /home/da-nie/Working/CUDA/CUDA-CNN/common/cimage.h
 	<vector>
 	<string>
 	"cmatrix.h"
 	"tga.h"
 
-1595664024 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudaforwardconvolution.cu.h
+1595824751 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudaforwardconvolution.cu.h
 	<stdio.h>
 	<stdint.h>
 	"../../common/cmatrix.h"
@@ -124,7 +124,7 @@
 	"../ccudatimespent.cu.h"
 	"../../system/system.h"
 
-1595664024 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudabackconvolution.cu.h
+1595824920 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudabackconvolution.cu.h
 	<stdio.h>
 	<stdint.h>
 	"../handle_error.cu.h"
@@ -132,7 +132,7 @@
 	"../ccudatimespent.cu.h"
 	"../../system/system.h"
 
-1595664024 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudabackdeconvolution.cu.h
+1595824939 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudabackdeconvolution.cu.h
 	<stdio.h>
 	<stdint.h>
 	"../handle_error.cu.h"
