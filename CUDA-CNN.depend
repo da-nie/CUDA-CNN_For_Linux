@@ -79,7 +79,7 @@
 	<vector>
 	<string>
 
-1596204677 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudacnn.cu.h
+1597081391 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudacnn.cu.h
 	<stdio.h>
 	<stdint.h>
 	<memory>
@@ -156,7 +156,7 @@
 	"../ccudatimespent.cu.h"
 	"../../system/system.h"
 
-1595664024 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudafunction.cu.h
+1596645403 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/math/ccudafunction.cu.h
 	<stdio.h>
 	<stdint.h>
 	"../handle_error.cu.h"
