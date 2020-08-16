@@ -16,7 +16,7 @@
 	"cmatrix.h"
 	<math.h>
 
-1595825059 /home/da-nie/Working/CUDA/CUDA-CNN/common/cmatrix.h
+1597131803 /home/da-nie/Working/CUDA/CUDA-CNN/common/cmatrix.h
 	<vector>
 	"cvector.h"
 	"idatastream.h"
@@ -61,7 +61,7 @@
 	"craiifileout.h"
 	<string.h>
 
-1595664024 source:/home/da-nie/Working/CUDA/CUDA-CNN/cuda/cuda.cu
+1597331911 source:/home/da-nie/Working/CUDA/CUDA-CNN/cuda/cuda.cu
 	"cuda.cu.h"
 	<cstdio>
 	<ctime>
@@ -79,7 +79,7 @@
 	<vector>
 	<string>
 
-1597081391 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudacnn.cu.h
+1597598143 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudacnn.cu.h
 	<stdio.h>
 	<stdint.h>
 	<memory>
@@ -96,14 +96,14 @@
 	"math/ccudamaxdepooling.cu.h"
 	"math/ccudafunction.cu.h"
 
-1595937345 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudamatrixstorage.cu.h
+1597598073 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudamatrixstorage.cu.h
 	<stdio.h>
 	<stdint.h>
 	"handle_error.cu.h"
 	"../system/system.h"
 	"ccudasharedptr.cu.h"
 
-1594139720 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudasharedptr.cu.h
+1597331843 /home/da-nie/Working/CUDA/CUDA-CNN/cuda/ccudasharedptr.cu.h
 	<stdio.h>
 	<stdint.h>
 	"handle_error.cu.h"
