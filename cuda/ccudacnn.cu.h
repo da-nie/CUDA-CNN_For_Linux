@@ -36,7 +36,7 @@
 //константы
 //****************************************************************************************************
 
-static const double DROPOUT_LEVEL=1.9;//вероятность исключения нейронов
+static const double DROPOUT_LEVEL=0.8;//вероятность исключения нейронов
 
 //****************************************************************************************************
 //предварительные объявления
@@ -56,6 +56,8 @@ class CCUDACNN
   {
    size_t Index;//номер изображения
    bool MirrorToHorizontal;//включено ли зеркальное отражение по горизонтали
+   int32_t OffsetX;//смещение по X
+   int32_t OffsetY;//смещение по Y
   };
   //параметры обучения
   #pragma pack(1)
@@ -68,11 +70,11 @@ class CCUDACNN
   };
   #pragma pack()
   //-константы------------------------------------------------------------------------------------------
-  static const bool ENABLE_MIRROR_TO_HORIZONTAL=false;//разрешить использование отражённых по горизонтали изображений
+  static const bool ENABLE_MIRROR_TO_HORIZONTAL=true;//разрешить использование отражённых по горизонтали изображений
 
   static const size_t STRING_BUFFER_SIZE=1024;//размер буфера строки
 
-  static const size_t CUDA_MAX_INPUT_IMAGE_AMOUNT=80;//количество одновременно обрабатываемых CUDA изображений
+ static const size_t CUDA_MAX_INPUT_IMAGE_AMOUNT=210;//количество одновременно обрабатываемых CUDA изображений
 
   static const size_t IMAGE_WIDTH=224; //ширина входных изображений
   static const size_t IMAGE_HEIGHT=224; //высота входных изображений
@@ -81,15 +83,22 @@ class CCUDACNN
   static const size_t KERNEL_A_WIDTH=5;//ширина ядер первого слоя
   static const size_t KERNEL_A_HEIGHT=5;//высота ядер первого слоя
 
-  static const size_t POOLING_A_WIDTH=4;//коэффициент дискретизации по ширине первого слоя
-  static const size_t POOLING_A_HEIGHT=4;//коэффициент дискретизации по высоте первого слоя
+  static const size_t POOLING_A_WIDTH=2;//коэффициент дискретизации по ширине первого слоя
+  static const size_t POOLING_A_HEIGHT=2;//коэффициент дискретизации по высоте первого слоя
 
-  static const size_t KERNEL_B_AMOUNT=2;//количество ядер второго слоя
+  static const size_t KERNEL_B_AMOUNT=16;//количество ядер второго слоя
   static const size_t KERNEL_B_WIDTH=5;//ширина ядер второго слоя
   static const size_t KERNEL_B_HEIGHT=5;//высота ядер второго слоя
 
-  static const size_t POOLING_B_WIDTH=4;//коэффициент дискретизации по ширине второго слоя
-  static const size_t POOLING_B_HEIGHT=4;//коэффициент дискретизации по высоте второго слоя
+  static const size_t POOLING_B_WIDTH=2;//коэффициент дискретизации по ширине второго слоя
+  static const size_t POOLING_B_HEIGHT=2;//коэффициент дискретизации по высоте второго слоя
+
+  static const size_t KERNEL_C_AMOUNT=24;//количество ядер третьего слоя
+  static const size_t KERNEL_C_WIDTH=5;//ширина ядер третьего слоя
+  static const size_t KERNEL_C_HEIGHT=5;//высота ядер третьего слоя
+
+  static const size_t POOLING_C_WIDTH=2;//коэффициент дискретизации по ширине третьего слоя
+  static const size_t POOLING_C_HEIGHT=2;//коэффициент дискретизации по высоте третьего слоя
 
   static const size_t NN_LAYER_AMOUNT=2;//количество слоёв полносвязной нейросети
 
@@ -105,6 +114,8 @@ class CCUDACNN
   CMatrix<type_t> KernelBiasA[KERNEL_A_AMOUNT];//смещения ядер первого слоя
   CMatrix<type_t> KernelB[KERNEL_B_AMOUNT];//набор ядер второго слоя
   CMatrix<type_t> KernelBiasB[KERNEL_B_AMOUNT];//смещения ядер второго слоя
+  CMatrix<type_t> KernelC[KERNEL_C_AMOUNT];//набор ядер третьего слоя
+  CMatrix<type_t> KernelBiasC[KERNEL_C_AMOUNT];//смещения ядер третьего слоя
 
   CMatrix<type_t> LayerWeigh[NN_LAYER_AMOUNT];//веса полносвязной нейросети
   CMatrix<type_t> LayerBias[NN_LAYER_AMOUNT];//набор смещений полносвязной сети
@@ -113,6 +124,8 @@ class CCUDACNN
   CMatrix<type_t> dKernelBiasA[KERNEL_A_AMOUNT];//поправки смещений ядер первого слоя
   CMatrix<type_t> dKernelB[KERNEL_B_AMOUNT];//набор поправок ядер второго слоя
   CMatrix<type_t> dKernelBiasB[KERNEL_B_AMOUNT];//поправки смещений ядер второго слоя
+  CMatrix<type_t> dKernelC[KERNEL_C_AMOUNT];//набор поправок ядер третьего слоя
+  CMatrix<type_t> dKernelBiasC[KERNEL_C_AMOUNT];//поправки смещений ядер третьего слоя
 
   CMatrix<type_t> dLayerWeigh[NN_LAYER_AMOUNT];//поправки весов полносвязной нейросети
   CMatrix<type_t> dLayerBias[NN_LAYER_AMOUNT];//набор поправок смещений полносвязной сети
@@ -121,6 +134,8 @@ class CCUDACNN
   CMatrix<type_t> LastdKernelBiasA[KERNEL_A_AMOUNT];//поправки смещений ядер первого слоя
   CMatrix<type_t> LastdKernelB[KERNEL_B_AMOUNT];//набор поправок ядер второго слоя
   CMatrix<type_t> LastdKernelBiasB[KERNEL_B_AMOUNT];//поправки смещений ядер второго слоя
+  CMatrix<type_t> LastdKernelC[KERNEL_C_AMOUNT];//набор поправок ядер третьего слоя
+  CMatrix<type_t> LastdKernelBiasC[KERNEL_C_AMOUNT];//поправки смещений ядер третьего слоя
 
   CMatrix<type_t> LastdLayerWeigh[NN_LAYER_AMOUNT];//поправки весов полносвязной нейросети
   CMatrix<type_t> LastdLayerBias[NN_LAYER_AMOUNT];//набор поправок смещений полносвязной сети
@@ -130,9 +145,11 @@ class CCUDACNN
 
   CCUDAMatrixStorage<type_t> CUDA_KernelA;//набор ядер первого слоя для CUDA
   CCUDAMatrixStorage<type_t> CUDA_KernelB;//набор ядер второго слоя для CUDA
+  CCUDAMatrixStorage<type_t> CUDA_KernelC;//набор ядер третьего слоя для CUDA
 
   CCUDAMatrixStorage<type_t> CUDA_KernelBiasA;//набор смещений ядер первого слоя для CUDA
   CCUDAMatrixStorage<type_t> CUDA_KernelBiasB;//набор смещений второго слоя для CUDA
+  CCUDAMatrixStorage<type_t> CUDA_KernelBiasC;//набор смещений третьего слоя для CUDA
 
   CCUDAMatrixStorage<type_t> CUDA_LayerWeigh[NN_LAYER_AMOUNT];//набор весов полносвязной нейросети
   CCUDAMatrixStorage<type_t> CUDA_LayerBias[NN_LAYER_AMOUNT];//набор смещений полносвязной сети
@@ -350,7 +367,8 @@ void CCUDACNN<type_t>::InitKernel(CMatrix<type_t> &cMatrixKernel,CMatrix<type_t>
 
  //используем метод инициализации He (Ге)
  size_t size=kernel_width*kernel_height;
- size_t size_image=image_height*image_width*kernel_depth;
+// size_t size_image=image_height*image_width*kernel_depth;
+ size_t size_image=size*kernel_depth;
  type_t koeff=static_cast<type_t>(sqrt(2.0/size_image));
  type_t bias=static_cast<type_t>((GetRandValue(1.0))*koeff);
 // cMatrixKernelBias.SetElement(0,0,bias);
@@ -413,6 +431,11 @@ bool CCUDACNN<type_t>::NetProcessing(bool only_cost,double max_cost,const std::v
   CUDA_KernelB.Set(n,KernelB[n].GetColumnPtr(0));
   CUDA_KernelBiasB.Set(n,KernelBiasB[n].GetColumnPtr(0));
  }
+ for(size_t n=0;n<KERNEL_C_AMOUNT;n++)
+ {
+  CUDA_KernelC.Set(n,KernelC[n].GetColumnPtr(0));
+  CUDA_KernelBiasC.Set(n,KernelBiasC[n].GetColumnPtr(0));
+ }
  //копируем полносвязную сеть
  for(size_t n=0;n<NN_LAYER_AMOUNT;n++)
  {
@@ -426,28 +449,34 @@ bool CCUDACNN<type_t>::NetProcessing(bool only_cost,double max_cost,const std::v
  for(size_t n=0;n<part_size;n++)
  {
   size_t image_index=image_kit[n].Index;
-  if (image_kit[n].MirrorToHorizontal==false) CUDA_InputImage.Set(n,image[image_index].first.GetColumnPtr(0));//режим зеркального отраженния отключён
-  else
+  CMatrix<type_t> &cMatrix_Original=image[image_index].first;
+  size_t w=cMatrix_Original.GetSizeX();
+  size_t h=cMatrix_Original.GetSizeY();
+  CMatrix<type_t> cMatrix_Image(h,w);
+  for(size_t depth=0;depth<h;depth++)
   {
-   CMatrix<type_t> &cMatrix_Original=image[image_index].first;
-   size_t w=cMatrix_Original.GetSizeX();
-   size_t h=cMatrix_Original.GetSizeY();
-   CMatrix<type_t> cMatrix_Mirror(h,w);
-
-   for(size_t y=0;y<h;y++)
+   type_t *original_ptr=cMatrix_Original.GetColumnPtr(depth);
+   type_t *image_ptr=cMatrix_Image.GetColumnPtr(depth);
+   //корректируем изображение
+   for(size_t y=0;y<IMAGE_HEIGHT;y++)
    {
-    type_t *original_ptr=cMatrix_Original.GetColumnPtr(y);
-    type_t *mirror_ptr=cMatrix_Mirror.GetColumnPtr(y);
-    //переворачиваем изображение
-    for(size_t iy=0;iy<IMAGE_HEIGHT;iy++)
+    int32_t y_pos=static_cast<int32_t>(y);
+	y_pos+=image_kit[n].OffsetY;
+    while (y_pos<0) y_pos+=static_cast<int32_t>(IMAGE_HEIGHT);
+    y_pos%=static_cast<int32_t>(IMAGE_HEIGHT);
+	type_t *org_ptr=original_ptr+y_pos*IMAGE_WIDTH;
+    for(size_t x=0;x<IMAGE_WIDTH;x++,image_ptr++)
     {
-     type_t *org_ptr=original_ptr+iy*IMAGE_WIDTH+IMAGE_WIDTH-1;
-     type_t *mrr_ptr=mirror_ptr+iy*IMAGE_WIDTH;
-     for(size_t ix=0;ix<IMAGE_WIDTH;ix++,org_ptr--,mrr_ptr++) *mrr_ptr=*org_ptr;
+     int32_t x_pos=static_cast<int32_t>(x);
+ 	 if (image_kit[n].MirrorToHorizontal==true) x_pos=static_cast<int32_t>(IMAGE_WIDTH)-1-x;
+     x_pos+=image_kit[n].OffsetX;
+     while (x_pos<0) x_pos+=static_cast<int32_t>(IMAGE_WIDTH);
+	 x_pos%=static_cast<int32_t>(IMAGE_WIDTH);
+	 *image_ptr=*(org_ptr+x_pos);
     }
    }
-   CUDA_InputImage.Set(n,cMatrix_Mirror.GetColumnPtr(0));//режим зеркального отраженния включён
   }
+  CUDA_InputImage.Set(n,cMatrix_Image.GetColumnPtr(0));
  }
 
  //--------------------------------------------------
@@ -573,6 +602,67 @@ bool CCUDACNN<type_t>::NetProcessing(bool only_cost,double max_cost,const std::v
  throw "stop";
  */
 
+  //--------------------------------------------------
+ //выполняем свёртку с третьим слоем
+ //--------------------------------------------------
+ PauseInMs(PAUSE_IN_MS);
+ CCUDAForwardConvolution<type_t> cCUDAForwardConvolution_C;
+ //подключаемся к ядрам,
+ cCUDAForwardConvolution_C.cCUDAMatrixStorage_Kernel.Connect(CUDA_KernelC);
+ //подключаемся к смещениям
+ cCUDAForwardConvolution_C.cCUDAMatrixStorage_Bias.Connect(CUDA_KernelBiasC);
+ //подключаемся к части исходных данных
+ cCUDAForwardConvolution_C.cCUDAMatrixStorage_Image.Connect(cCUDAMaxPooling_B.cCUDAMatrixStorage_Output);
+ //выполняем свёртку
+ size_t forward_conv_c_width;
+ size_t forward_conv_c_height;
+ cCUDAForwardConvolution_C.ForwardConvolution(forward_pooling_conv_b_width,forward_pooling_conv_b_height,KERNEL_C_WIDTH,KERNEL_C_HEIGHT,forward_conv_c_width,forward_conv_c_height);
+ /*
+ cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.Reinterpret(forward_conv_c_width,forward_conv_c_height,cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.GetAmount()*cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.GetSizeY());
+ SaveCUDAMatrixStorage("conv_c",0,cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output,true);
+ throw "stop";
+ */
+
+ //--------------------------------------------------
+ //применяем функцию нейрона
+ //--------------------------------------------------
+ PauseInMs(PAUSE_IN_MS);
+ CCUDAFunction<type_t> cCUDAFunction_C(cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.GetAmount()*cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.GetSizeY());
+ cCUDAFunction_C.cCUDAMatrixStorage_Input.Connect(cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output);
+ //перестраиваем входной вектор
+ cCUDAFunction_C.cCUDAMatrixStorage_Input.Reinterpret(1,cCUDAFunction_C.cCUDAMatrixStorage_Input.GetSizeX(),cCUDAFunction_C.cCUDAMatrixStorage_Input.GetAmount()*cCUDAFunction_C.cCUDAMatrixStorage_Input.GetSizeY());
+ cCUDAFunction_C.ApplyLeakyReLU();
+ //cCUDAFunction_C.ApplyLinear();
+
+ /*
+ cCUDAFunction_C.cCUDAMatrixStorage_Output.Reinterpret(forward_conv_c_width,forward_conv_c_height,cCUDAFunction_C.cCUDAMatrixStorage_Output.GetAmount()*cCUDAFunction_C.cCUDAMatrixStorage_Output.GetSizeY());
+ SaveCUDAMatrixStorage("conv_f_c",0,cCUDAFunction_C.cCUDAMatrixStorage_Output,true);
+ throw "stop";
+ */
+
+ //--------------------------------------------------
+ //выполняем субдискретизацию после третьего слоя
+ //--------------------------------------------------
+ PauseInMs(PAUSE_IN_MS);
+ CCUDAMaxPooling<type_t> cCUDAMaxPooling_C(cCUDAFunction_C.cCUDAMatrixStorage_Output.GetAmount());
+ cCUDAMaxPooling_C.cCUDAMatrixStorage_Input.Connect(cCUDAFunction_C.cCUDAMatrixStorage_Output);
+ size_t forward_pooling_conv_c_width;
+ size_t forward_pooling_conv_c_height;
+ cCUDAMaxPooling_C.MaxPooling(forward_conv_c_width,forward_conv_c_height,POOLING_C_WIDTH,POOLING_C_HEIGHT,forward_pooling_conv_c_width,forward_pooling_conv_c_height);
+ //перестраиваем результат
+ cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.Reinterpret(cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.GetAmount()/part_size,cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.GetSizeX(),part_size);
+
+/*
+ cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.Reinterpret(forward_pooling_conv_c_width,forward_pooling_conv_c_height,cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.GetAmount()*cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.GetSizeY());
+ SaveCUDAMatrixStorage("pooling_c",0,cCUDAMaxPooling_B.cCUDAMatrixStorage_Output,true);
+ throw "stop";
+ */
+
+ /*
+ SaveCUDAMatrixStorage("kernel_c",0,CUDA_KernelC,true);
+ throw "stop";
+ */
+
  //--------------------------------------------------
  //применяем полносвязную нейросеть
  //--------------------------------------------------
@@ -580,16 +670,16 @@ bool CCUDACNN<type_t>::NetProcessing(bool only_cost,double max_cost,const std::v
  CCUDAMatrixStorage<type_t> cCUDAMatrixStorage_LayerOutputZ[NN_LAYER_AMOUNT+1];//выходы сети без функции нейрона
  CCUDAMatrixStorage<type_t> cCUDAMatrixStorage_LayerOutputH[NN_LAYER_AMOUNT+1];//выходы слоёв сети с функцией нейрона
 
- cCUDAMatrixStorage_LayerOutputZ[0].Connect(cCUDAMaxPooling_B.cCUDAMatrixStorage_Output);//подключаемся к выходу предыдущего слоя без функции нейрона
- cCUDAMatrixStorage_LayerOutputH[0].Connect(cCUDAMaxPooling_B.cCUDAMatrixStorage_Output);//подключаемся к выходу предыдущего слоя после функции нейрона
+ cCUDAMatrixStorage_LayerOutputZ[0].Connect(cCUDAMaxPooling_C.cCUDAMatrixStorage_Output);//подключаемся к выходу предыдущего слоя без функции нейрона
+ cCUDAMatrixStorage_LayerOutputH[0].Connect(cCUDAMaxPooling_C.cCUDAMatrixStorage_Output);//подключаемся к выходу предыдущего слоя после функции нейрона
 
- size_t forward_pooling_b_amount=cCUDAMaxPooling_B.cCUDAMatrixStorage_Output.GetAmount();
- size_t forward_pooling_b_size_x=cCUDAMaxPooling_B.cCUDAMatrixStorage_Output.GetSizeX();
- size_t forward_pooling_b_size_y=cCUDAMaxPooling_B.cCUDAMatrixStorage_Output.GetSizeY();
+ size_t forward_pooling_c_amount=cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.GetAmount();
+ size_t forward_pooling_c_size_x=cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.GetSizeX();
+ size_t forward_pooling_c_size_y=cCUDAMaxPooling_C.cCUDAMatrixStorage_Output.GetSizeY();
  //входная матрица представляет собой 1 x c_output_size_x, представим её как вектор c_output_size_x x 1
  //это нужно, потому что умножать потребуется весовую матрицу на матрицу входа
- cCUDAMatrixStorage_LayerOutputZ[0].Reinterpret(forward_pooling_b_size_x*forward_pooling_b_size_y*(forward_pooling_b_amount/part_size),1,part_size);
- cCUDAMatrixStorage_LayerOutputH[0].Reinterpret(forward_pooling_b_size_x*forward_pooling_b_size_y*(forward_pooling_b_amount/part_size),1,part_size);
+ cCUDAMatrixStorage_LayerOutputZ[0].Reinterpret(forward_pooling_c_size_x*forward_pooling_c_size_y*(forward_pooling_c_amount/part_size),1,part_size);
+ cCUDAMatrixStorage_LayerOutputH[0].Reinterpret(forward_pooling_c_size_x*forward_pooling_c_size_y*(forward_pooling_c_amount/part_size),1,part_size);
 
  //создадим матрицы dropout'а
  CCUDAMatrixStorage<type_t> cCUDAMatrixStorage_DropOutH[NN_LAYER_AMOUNT];
@@ -633,14 +723,14 @@ bool CCUDACNN<type_t>::NetProcessing(bool only_cost,double max_cost,const std::v
   cCUDAFunction.cCUDAMatrixStorage_Input.Connect(cCUDAMatrixStorage_LayerOutputZ[n+1]);
   if (n==NN_LAYER_AMOUNT-1) cCUDAFunction.ApplySoftMax();//последний слой - softmax
                        else cCUDAFunction.ApplySigmoid();
+  //cCUDAFunction.ApplySigmoid();
   //применяем dropout
   PauseInMs(PAUSE_IN_MS);
   CCUDAMatrixStorage<type_t>::MatrixColumnScalarProduction(cCUDAMatrixStorage_LayerOutputH[n+1],cCUDAFunction.cCUDAMatrixStorage_Output,cCUDAMatrixStorage_DropOutH[n]);
   cCUDAMatrixStorage_LayerOutputH[n+1].Reinterpret(cCUDAMatrixStorage_LayerOutputH[n+1].GetSizeX(),1,cCUDAMatrixStorage_LayerOutputH[n+1].GetAmount());
  }
-
-/*
- SaveCUDAMatrixStorage("input_net",0,cCUDAMatrixStorage_LayerOutputH[1]);
+ /*
+ SaveCUDAMatrixStorage("input_net",0,cCUDAMatrixStorage_LayerOutputH[0]);
  throw "stop";
  */
 
@@ -747,6 +837,7 @@ bool CCUDACNN<type_t>::NetProcessing(bool only_cost,double max_cost,const std::v
   cCUDAFunction.cCUDAMatrixStorage_Input.Connect(cCUDAMatrixStorage_LayerOutputZ[n]);
   if (n==NN_LAYER_AMOUNT) cCUDAFunction.ApplyDifferentialSoftMax();//последний слой softmax
                      else cCUDAFunction.ApplyDifferentialSigmoid();
+  //cCUDAFunction.ApplyDifferentialSigmoid();
   //применяем dropout
   PauseInMs(PAUSE_IN_MS);
   CCUDAMatrixStorage<type_t>::MatrixColumnScalarProduction(cCUDAMatrixStorage_LayerDifferential[n],cCUDAFunction.cCUDAMatrixStorage_Output,cCUDAMatrixStorage_DropOutH[n-1]);
@@ -822,26 +913,175 @@ bool CCUDACNN<type_t>::NetProcessing(bool only_cost,double max_cost,const std::v
  */
 
 
-
- //--------------------------------------------------
- //выполняем обратное распространение в слое субдискретизации
+  //--------------------------------------------------
+ //выполняем обратное распространение в слое субдискретизации C
  //--------------------------------------------------
  //приведём вертикальные матрицы к горизонтальным с размером результата субдискретизации с увеличением их количества
- size_t backward_delta_layer_b_amount=cCUDAMatrixStorage_LayerDelta[0].GetAmount();
- size_t backward_delta_layer_b_size_x=cCUDAMatrixStorage_LayerDelta[0].GetSizeX();
- size_t backward_delta_layer_b_size_y=cCUDAMatrixStorage_LayerDelta[0].GetSizeY();
- cCUDAMatrixStorage_LayerDelta[0].Reinterpret(1,forward_pooling_b_size_x,forward_pooling_b_size_y*(backward_delta_layer_b_amount*backward_delta_layer_b_size_x*backward_delta_layer_b_size_y)/(forward_pooling_b_size_x*forward_pooling_b_size_y));
+ size_t backward_delta_layer_c_amount=cCUDAMatrixStorage_LayerDelta[0].GetAmount();
+ size_t backward_delta_layer_c_size_x=cCUDAMatrixStorage_LayerDelta[0].GetSizeX();
+ size_t backward_delta_layer_c_size_y=cCUDAMatrixStorage_LayerDelta[0].GetSizeY();
+ cCUDAMatrixStorage_LayerDelta[0].Reinterpret(1,forward_pooling_c_size_x,forward_pooling_c_size_y*(backward_delta_layer_c_amount*backward_delta_layer_c_size_x*backward_delta_layer_c_size_y)/(forward_pooling_c_size_x*forward_pooling_c_size_y));
 
  //делаем обратную субдискретизацию
  PauseInMs(PAUSE_IN_MS);
- CCUDAMaxDePooling<type_t> cCUDAMaxDePooling_B(cCUDAMatrixStorage_LayerDelta[0].GetAmount());
- cCUDAMaxDePooling_B.cCUDAMatrixStorage_Input.Connect(cCUDAMatrixStorage_LayerDelta[0]);
+ CCUDAMaxDePooling<type_t> cCUDAMaxDePooling_C(cCUDAMatrixStorage_LayerDelta[0].GetAmount());
+ cCUDAMaxDePooling_C.cCUDAMatrixStorage_Input.Connect(cCUDAMatrixStorage_LayerDelta[0]);
+ cCUDAMaxDePooling_C.cCUDAMatrixStorage_InputIndex.Connect(cCUDAMaxPooling_C.cCUDAMatrixStorage_OutputIndex);
+ cCUDAMaxDePooling_C.MaxDePooling(forward_pooling_conv_c_width,forward_pooling_conv_c_height,forward_conv_c_width,forward_conv_c_height);
+
+ //удаляем ненужные данные
+ cCUDAMaxPooling_C.Release();
+ for(size_t n=0;n<NN_LAYER_AMOUNT+1;n++) cCUDAMatrixStorage_LayerDelta[n].Release();
+
+ /*
+ cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output.Reinterpret(forward_conv_c_width,forward_conv_c_height,cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output.GetAmount()*cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output.GetSizeY());
+ SaveCUDAMatrixStorage("de_pooling_c",0,cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output,true);
+ throw "stop";
+ */
+
+ //--------------------------------------------------
+ //формируем производную по входу на функцию нейрона после слоя свёртки
+ //--------------------------------------------------
+ PauseInMs(PAUSE_IN_MS);
+ CCUDAFunction<type_t> cCUDAFunction_dC(cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.GetAmount());
+ cCUDAFunction_dC.cCUDAMatrixStorage_Input.Connect(cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output);
+ cCUDAFunction_dC.ApplyDifferentialLeakyReLU();
+ //cCUDAFunction_dC.ApplyDifferentialLinear();
+
+ //--------------------------------------------------
+ //умножаем ошибку на выходе слоя на производную функции нейрона
+ //--------------------------------------------------
+ //представим строки столбцами
+ size_t backward_dc_amount=cCUDAFunction_dC.cCUDAMatrixStorage_Output.GetAmount();
+ size_t backward_dc_size_x=cCUDAFunction_dC.cCUDAMatrixStorage_Output.GetSizeX();
+ size_t backward_dc_size_y=cCUDAFunction_dC.cCUDAMatrixStorage_Output.GetSizeY();
+ cCUDAFunction_dC.cCUDAMatrixStorage_Output.Reinterpret(backward_dc_size_x*backward_dc_size_y,1,backward_dc_amount);
+
+ //представим строки столбцами
+ size_t backward_dc_depooling_amount=cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output.GetAmount();
+ size_t backward_dc_depooling_size_x=cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output.GetSizeX();
+ size_t backward_dc_depooling_size_y=cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output.GetSizeY();
+ cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output.Reinterpret(backward_dc_depooling_size_x*backward_dc_depooling_size_y*(backward_dc_depooling_amount/backward_dc_amount),1,backward_dc_amount);
+
+ //выполняем построчное скалярное произведение
+ PauseInMs(PAUSE_IN_MS);
+ CCUDAMatrixStorage<type_t> cCUDAMatrixStorage_DeltaC;
+ CCUDAMatrixStorage<type_t>::MatrixColumnScalarProduction(cCUDAMatrixStorage_DeltaC,cCUDAFunction_dC.cCUDAMatrixStorage_Output,cCUDAMaxDePooling_C.cCUDAMatrixStorage_Output);
+
+ //результат интерпретируем как строки матрицы
+ cCUDAMatrixStorage_DeltaC.Reinterpret(cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.GetSizeY(),cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.GetSizeX(),cCUDAForwardConvolution_C.cCUDAMatrixStorage_Output.GetAmount());
+ //удаляем ненужные матрицы
+ cCUDAMaxDePooling_C.Release();
+ cCUDAFunction_dC.Release();
+ cCUDAFunction_C.Release();
+ cCUDAForwardConvolution_C.Release();
+
+ /*
+ cCUDAMatrixStorage_DeltaC.Reinterpret(forward_conv_c_width,forward_conv_c_height,cCUDAMatrixStorage_DeltaC.GetAmount()*cCUDAMatrixStorage_DeltaC.GetSizeY());
+ SaveCUDAMatrixStorage("de_pooling_f_c",0,cCUDAMatrixStorage_DeltaC,true);
+ throw "stop";
+ */
+
+
+ //--------------------------------------------------
+ //вычисляем поправки к ядрам C
+ //--------------------------------------------------
+ PauseInMs(PAUSE_IN_MS);
+ CCUDABackConvolution<type_t> cCUDABackConvolution_C;
+ cCUDABackConvolution_C.cCUDAMatrixStorage_Delta.Connect(cCUDAMatrixStorage_DeltaC);
+ cCUDABackConvolution_C.cCUDAMatrixStorage_Image.Connect(cCUDAMaxPooling_B.cCUDAMatrixStorage_Output);
+ size_t backward_conv_c_width;
+ size_t backward_conv_c_height;
+ cCUDABackConvolution_C.BackConvolution(forward_pooling_conv_b_width,forward_pooling_conv_b_height,forward_conv_c_width,forward_conv_c_height,backward_conv_c_width,backward_conv_c_height);
+ /*
+ cCUDABackConvolution_C.cCUDAMatrixStorage_Output.Reinterpret(KERNEL_C_HEIGHT,KERNEL_C_WIDTH,cCUDABackConvolution_C.cCUDAMatrixStorage_Output.GetAmount()*cCUDABackConvolution_C.cCUDAMatrixStorage_Output.GetSizeY());
+ SaveCUDAMatrixStorage("back_conv_c",0,cCUDABackConvolution_C.cCUDAMatrixStorage_Output,true);
+ throw "stop";
+ */
+
+ //обновляем ядра C
+ //добавляем поправки к весам и смещениям
+ for(size_t n=0;n<cCUDABackConvolution_C.cCUDAMatrixStorage_Output.GetAmount();n++)
+ {
+  CMatrix<type_t> cMatrix_dKBiasC(cCUDABackConvolution_C.cCUDAMatrixStorage_OutputBias.GetSizeY(),cCUDABackConvolution_C.cCUDAMatrixStorage_OutputBias.GetSizeX());
+  cCUDABackConvolution_C.cCUDAMatrixStorage_OutputBias.Copy(n,cMatrix_dKBiasC.GetColumnPtr(0));
+  //корректируем смещения ядер C
+  CMatrix<type_t>::Add(dKernelBiasC[n],dKernelBiasC[n],cMatrix_dKBiasC);
+
+  CMatrix<type_t> cMatrix_dKC(cCUDABackConvolution_C.cCUDAMatrixStorage_Output.GetSizeY(),cCUDABackConvolution_C.cCUDAMatrixStorage_Output.GetSizeX());
+  cCUDABackConvolution_C.cCUDAMatrixStorage_Output.Copy(n,cMatrix_dKC.GetColumnPtr(0));
+  //корректируем веса ядер C
+  CMatrix<type_t>::Add(dKernelC[n],dKernelC[n],cMatrix_dKC);
+
+  /*
+   char str[255];
+
+   sprintf(str,"dKernel_bias_c_%i.txt",n);
+   SaveMatrix(str,cMatrix_dKBiasC);
+   sprintf(str,"Kernel_bias_c_%i.txt",n);
+   SaveMatrix(str,KernelBiasC[n]);
+
+   sprintf(str,"dKernelc_%i.txt",n);
+   SaveMatrix(str,cMatrix_dKC);
+   sprintf(str,"Kernelc_%i.txt",n);
+   SaveMatrix(str,KernelC[n]);
+   */
+
+ }
+
+ /*
+ cCUDABackConvolution_C.cCUDAMatrixStorage_Output.Reinterpret(KERNEL_C_HEIGHT,KERNEL_C_WIDTH,cCUDABackConvolution_C.cCUDAMatrixStorage_Output.GetAmount()*cCUDABackConvolution_C.cCUDAMatrixStorage_Output.GetSizeY());
+ SaveCUDAMatrixStorage("p_c",0,cCUDABackConvolution_C.cCUDAMatrixStorage_Output,true);
+ throw "stop";
+ */
+
+ /*
+ for(size_t n=0;n<cCUDABackConvolution_C.cCUDAMatrixStorage_Output.GetAmount();n++)
+ {
+  for(size_t m=0;m<dKernelC[n].GetSizeY();m++)
+  {
+   CMatrix<type_t> cMatrix(KERNEL_C_HEIGHT,KERNEL_C_WIDTH);
+   type_t *ptr_m=cMatrix.GetColumnPtr(0);
+   type_t *ptr_k=dKernelC[n].GetColumnPtr(m);
+   for(size_t p=0;p<dKernelC[n].GetSizeX();p++,ptr_m++,ptr_k++) *ptr_m=*ptr_k;
+   char str[255];
+   sprintf(str,"dkernel_c[%i][%i].tga",m,n);
+   cMatrix.SaveImage(str,10,10);
+  }
+ }
+ throw "stop";
+ */
+
+
+ //удаляем ненужные данные
+ cCUDABackConvolution_C.Release();
+
+ //--------------------------------------------------
+ //переносим дельты на слой B
+ //--------------------------------------------------
+ PauseInMs(PAUSE_IN_MS);
+ CCUDABackDeConvolution<type_t> cCUDABackDeConvolution_C;
+ cCUDABackDeConvolution_C.cCUDAMatrixStorage_Delta.Connect(cCUDAMatrixStorage_DeltaC);
+ cCUDABackDeConvolution_C.cCUDAMatrixStorage_Kernel.Connect(CUDA_KernelC);
+ size_t backward_de_conv_c_width;
+ size_t backward_de_conv_c_height;
+ cCUDABackDeConvolution_C.BackDeConvolution(forward_conv_c_width,forward_conv_c_height,KERNEL_C_WIDTH,KERNEL_C_HEIGHT,backward_de_conv_c_width,backward_de_conv_c_height);
+
+ //--------------------------------------------------
+ //выполняем обратное распространение в слое субдискретизации B
+ //--------------------------------------------------
+ //делаем обратную субдискретизацию
+ PauseInMs(PAUSE_IN_MS);
+ CCUDAMaxDePooling<type_t> cCUDAMaxDePooling_B(cCUDAMaxPooling_B.cCUDAMatrixStorage_OutputIndex.GetAmount());
+ cCUDAMaxDePooling_B.cCUDAMatrixStorage_Input.Connect(cCUDABackDeConvolution_C.cCUDAMatrixStorage_Output);
  cCUDAMaxDePooling_B.cCUDAMatrixStorage_InputIndex.Connect(cCUDAMaxPooling_B.cCUDAMatrixStorage_OutputIndex);
+ //реинтерпретируем входной вектор
+ cCUDAMaxDePooling_B.cCUDAMatrixStorage_Input.Reinterpret(cCUDAMaxPooling_B.cCUDAMatrixStorage_OutputIndex.GetSizeY(),cCUDAMaxPooling_B.cCUDAMatrixStorage_OutputIndex.GetSizeX(),cCUDAMaxPooling_B.cCUDAMatrixStorage_OutputIndex.GetAmount());
  cCUDAMaxDePooling_B.MaxDePooling(forward_pooling_conv_b_width,forward_pooling_conv_b_height,forward_conv_b_width,forward_conv_b_height);
 
  //удаляем ненужные данные
  cCUDAMaxPooling_B.Release();
- for(size_t n=0;n<NN_LAYER_AMOUNT+1;n++) cCUDAMatrixStorage_LayerDelta[n].Release();
+ cCUDABackDeConvolution_C.Release();
 
  /*
  cCUDAMaxDePooling_B.cCUDAMatrixStorage_Output.Reinterpret(forward_conv_b_width,forward_conv_b_height,cCUDAMaxDePooling_B.cCUDAMatrixStorage_Output.GetAmount()*cCUDAMaxDePooling_B.cCUDAMatrixStorage_Output.GetSizeY());
@@ -1118,6 +1358,19 @@ void CCUDACNN<type_t>::SaveKernelImage(void)
    cMatrix.SaveImage(file_name,10,10);
   }
  }
+ for(size_t k=0;k<KERNEL_C_AMOUNT;k++)
+ {
+  for(size_t n=0;n<KernelC[k].GetSizeY();n++)
+  {
+   CMatrix<type_t> cMatrix(KERNEL_C_HEIGHT,KERNEL_C_WIDTH);
+   type_t *ptr=cMatrix.GetColumnPtr(0);
+   for(size_t m=0;m<KERNEL_C_HEIGHT*KERNEL_C_WIDTH;m++,ptr++) *ptr=KernelC[k].GetElement(n,m);
+   char file_name[255];
+   sprintf(file_name,"kernelc[%i][%i].tga",k,n);
+   cMatrix.SaveImage(file_name,10,10);
+  }
+ }
+
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -1139,6 +1392,11 @@ bool CCUDACNN<type_t>::LoadNet(const std::string &file_name,STrainingParam &sTra
    KernelB[k].Load(iDataStream_Ptr.get());
    KernelBiasB[k].Load(iDataStream_Ptr.get());
   }
+  for(size_t k=0;k<KERNEL_C_AMOUNT;k++)
+  {
+   KernelC[k].Load(iDataStream_Ptr.get());
+   KernelBiasC[k].Load(iDataStream_Ptr.get());
+  }
   for(size_t n=0;n<NN_LAYER_AMOUNT;n++)
   {
    LayerWeigh[n].Load(iDataStream_Ptr.get());
@@ -1154,6 +1412,11 @@ bool CCUDACNN<type_t>::LoadNet(const std::string &file_name,STrainingParam &sTra
   {
    LastdKernelB[k].Load(iDataStream_Ptr.get());
    LastdKernelBiasB[k].Load(iDataStream_Ptr.get());
+  }
+  for(size_t k=0;k<KERNEL_C_AMOUNT;k++)
+  {
+   LastdKernelC[k].Load(iDataStream_Ptr.get());
+   LastdKernelBiasC[k].Load(iDataStream_Ptr.get());
   }
   for(size_t n=0;n<NN_LAYER_AMOUNT;n++)
   {
@@ -1186,6 +1449,11 @@ bool CCUDACNN<type_t>::SaveNet(const std::string &file_name,const STrainingParam
    KernelB[k].Save(iDataStream_Ptr.get());
    KernelBiasB[k].Save(iDataStream_Ptr.get());
   }
+  for(size_t k=0;k<KERNEL_C_AMOUNT;k++)
+  {
+   KernelC[k].Save(iDataStream_Ptr.get());
+   KernelBiasC[k].Save(iDataStream_Ptr.get());
+  }
   for(size_t n=0;n<NN_LAYER_AMOUNT;n++)
   {
    LayerWeigh[n].Save(iDataStream_Ptr.get());
@@ -1201,6 +1469,11 @@ bool CCUDACNN<type_t>::SaveNet(const std::string &file_name,const STrainingParam
   {
    LastdKernelB[k].Save(iDataStream_Ptr.get());
    LastdKernelBiasB[k].Save(iDataStream_Ptr.get());
+  }
+  for(size_t k=0;k<KERNEL_C_AMOUNT;k++)
+  {
+   LastdKernelC[k].Save(iDataStream_Ptr.get());
+   LastdKernelBiasC[k].Save(iDataStream_Ptr.get());
   }
   for(size_t n=0;n<NN_LAYER_AMOUNT;n++)
   {
@@ -1223,7 +1496,7 @@ void CCUDACNN<type_t>::InitNet(void)
  char str[STRING_BUFFER_SIZE];
 
  //рассчитаем количество свёрток с одного входного изображения
- size_t conv_amount=KERNEL_B_AMOUNT;
+ size_t conv_amount=KERNEL_C_AMOUNT;
  //рассчитаем выходной размер одного входного изображения
  size_t input_width=IMAGE_WIDTH;
  size_t input_height=IMAGE_HEIGHT;
@@ -1239,44 +1512,41 @@ void CCUDACNN<type_t>::InitNet(void)
  //субдискретизация
  size_t pooling_b_width=conv_b_width/POOLING_B_WIDTH;
  size_t pooling_b_height=conv_b_height/POOLING_B_HEIGHT;
+//свёртка C
+ size_t conv_c_width=pooling_b_width-KERNEL_C_WIDTH+1;
+ size_t conv_c_height=pooling_b_height-KERNEL_C_HEIGHT+1;
+ //субдискретизация
+ size_t pooling_c_width=conv_c_width/POOLING_C_WIDTH;
+ size_t pooling_c_height=conv_c_height/POOLING_C_HEIGHT;
+
+ //создадим лямбда-функцию инициализации ядер
+ auto init_kernel=[this](CMatrix<type_t> &kernel,CMatrix<type_t> &kernel_bias,CMatrix<type_t> &dkernel,CMatrix<type_t> &dkernel_bias,CMatrix<type_t> &last_dkernel,CMatrix<type_t> &last_dkernel_bias,size_t kernel_width,size_t kernel_height,size_t kernel_depth,size_t input_width,size_t input_height)
+ {
+  InitKernel(kernel,kernel_bias,kernel_width,kernel_height,kernel_depth,input_width,input_height);
+
+  dkernel=CMatrix<type_t>(kernel.GetSizeY(),kernel.GetSizeX());
+  dkernel_bias=CMatrix<type_t>(kernel_bias.GetSizeY(),kernel_bias.GetSizeX());
+
+  last_dkernel=CMatrix<type_t>(kernel.GetSizeY(),kernel.GetSizeX());
+  last_dkernel_bias=CMatrix<type_t>(kernel_bias.GetSizeY(),kernel_bias.GetSizeX());
+
+  last_dkernel.Zero();
+  last_dkernel_bias.Zero();
+
+  kernel_bias.Zero();
+ };
 
  //инициализируем нейросеть
- for(size_t n=0;n<KERNEL_A_AMOUNT;n++)
- {
-  InitKernel(KernelA[n],KernelBiasA[n],KERNEL_A_WIDTH,KERNEL_A_HEIGHT,CImage<type_t>::COLOR_CHANNEL,input_width,input_height);
+ for(size_t n=0;n<KERNEL_A_AMOUNT;n++) init_kernel(KernelA[n],KernelBiasA[n],dKernelA[n],dKernelBiasA[n],LastdKernelA[n],LastdKernelBiasA[n],KERNEL_A_WIDTH,KERNEL_A_HEIGHT,CImage<type_t>::COLOR_CHANNEL,input_width,input_height);
+ for(size_t n=0;n<KERNEL_B_AMOUNT;n++) init_kernel(KernelB[n],KernelBiasB[n],dKernelB[n],dKernelBiasB[n],LastdKernelB[n],LastdKernelBiasB[n],KERNEL_B_WIDTH,KERNEL_B_HEIGHT,KERNEL_A_AMOUNT,pooling_a_width,pooling_a_height);
+ for(size_t n=0;n<KERNEL_C_AMOUNT;n++) init_kernel(KernelC[n],KernelBiasC[n],dKernelC[n],dKernelBiasC[n],LastdKernelC[n],LastdKernelBiasC[n],KERNEL_C_WIDTH,KERNEL_C_HEIGHT,KERNEL_B_AMOUNT,pooling_b_width,pooling_b_height);
 
-  dKernelA[n]=CMatrix<type_t>(KernelA[n].GetSizeY(),KernelA[n].GetSizeX());
-  dKernelBiasA[n]=CMatrix<type_t>(KernelBiasA[n].GetSizeY(),KernelBiasA[n].GetSizeX());
-
-  LastdKernelA[n]=CMatrix<type_t>(KernelA[n].GetSizeY(),KernelA[n].GetSizeX());
-  LastdKernelBiasA[n]=CMatrix<type_t>(KernelBiasA[n].GetSizeY(),KernelBiasA[n].GetSizeX());
-
-  LastdKernelA[n].Zero();
-  LastdKernelBiasA[n].Zero();
-
-  KernelBiasA[n].Zero();
- }
- for(size_t n=0;n<KERNEL_B_AMOUNT;n++)
- {
-  InitKernel(KernelB[n],KernelBiasB[n],KERNEL_B_WIDTH,KERNEL_B_HEIGHT,KERNEL_A_AMOUNT,pooling_a_width,pooling_a_height);
-
-  dKernelB[n]=CMatrix<type_t>(KernelB[n].GetSizeY(),KernelB[n].GetSizeX());
-  dKernelBiasB[n]=CMatrix<type_t>(KernelBiasB[n].GetSizeY(),KernelBiasB[n].GetSizeX());
-
-  LastdKernelB[n]=CMatrix<type_t>(KernelB[n].GetSizeY(),KernelB[n].GetSizeX());
-  LastdKernelBiasB[n]=CMatrix<type_t>(KernelBiasB[n].GetSizeY(),KernelBiasB[n].GetSizeX());
-
-  LastdKernelB[n].Zero();
-  LastdKernelBiasB[n].Zero();
-
-  KernelBiasB[n].Zero();
- }
- sprintf(str,"Входов полносвязного слоя:%i (свёрток:%i ширина:%i высота:%i)\r\n",conv_amount*pooling_b_width*pooling_b_height,conv_amount,pooling_b_width,pooling_b_height);
+ sprintf(str,"Входов полносвязного слоя:%i (свёрток:%i ширина:%i высота:%i)\r\n",conv_amount*pooling_c_width*pooling_c_height,conv_amount,pooling_c_width,pooling_c_height);
  PutMessageToConsole(str);
 
  //создаём полносвязный слой и инициализируем его веса
 // size_t neuron_in_layer[NN_LAYER_AMOUNT+1]={conv_amount*pooling_b_width*pooling_b_height,conv_amount*pooling_b_height,conv_amount*OUTPUT_LAYER_SIZE,OUTPUT_LAYER_SIZE};
- size_t neuron_in_layer[NN_LAYER_AMOUNT+1]={conv_amount*pooling_b_width*pooling_b_height,conv_amount*OUTPUT_LAYER_SIZE,OUTPUT_LAYER_SIZE};
+ size_t neuron_in_layer[NN_LAYER_AMOUNT+1]={conv_amount*pooling_c_width*pooling_c_height,conv_amount*OUTPUT_LAYER_SIZE,OUTPUT_LAYER_SIZE};
  for(size_t n=1;n<NN_LAYER_AMOUNT+1;n++)
  {
   LayerWeigh[n-1]=CMatrix<type_t>(neuron_in_layer[n],neuron_in_layer[n-1]);
@@ -1295,7 +1565,7 @@ void CCUDACNN<type_t>::InitNet(void)
   LastdLayerBias[n-1].Zero();
  }
 
- //выделяем память для ядер свёртки и копируем ядра
+ //выделяем память для ядер свёртки
  CCUDAMatrixStorage<type_t> cCUDAMatrixStorage_KernelA(KernelA[0].GetSizeY(),KernelA[0].GetSizeX(),KERNEL_A_AMOUNT);
  cCUDAMatrixStorage_KernelA.Create();
  CUDA_KernelA.Move(cCUDAMatrixStorage_KernelA);
@@ -1311,6 +1581,14 @@ void CCUDACNN<type_t>::InitNet(void)
  CCUDAMatrixStorage<type_t> cCUDAMatrixStorage_KernelBiasB(KernelBiasB[0].GetSizeY(),KernelBiasB[0].GetSizeX(),KERNEL_B_AMOUNT);
  cCUDAMatrixStorage_KernelBiasB.Create();
  CUDA_KernelBiasB.Move(cCUDAMatrixStorage_KernelBiasB);
+
+ CCUDAMatrixStorage<type_t> cCUDAMatrixStorage_KernelC(KernelC[0].GetSizeY(),KernelC[0].GetSizeX(),KERNEL_C_AMOUNT);
+ cCUDAMatrixStorage_KernelC.Create();
+ CUDA_KernelC.Move(cCUDAMatrixStorage_KernelC);
+
+ CCUDAMatrixStorage<type_t> cCUDAMatrixStorage_KernelBiasC(KernelBiasC[0].GetSizeY(),KernelBiasC[0].GetSizeX(),KERNEL_C_AMOUNT);
+ cCUDAMatrixStorage_KernelBiasC.Create();
+ CUDA_KernelBiasC.Move(cCUDAMatrixStorage_KernelBiasC);
 
  //выделяем память для полносвязного слоя
  for(size_t n=0;n<NN_LAYER_AMOUNT;n++)
@@ -1345,6 +1623,11 @@ void CCUDACNN<type_t>::ResetDeltaWeighAndBias(void)
   dKernelB[n].Zero();
   dKernelBiasB[n].Zero();
  }
+ for(size_t n=0;n<KERNEL_C_AMOUNT;n++)
+ {
+  dKernelC[n].Zero();
+  dKernelBiasC[n].Zero();
+ }
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -1353,9 +1636,9 @@ void CCUDACNN<type_t>::ResetDeltaWeighAndBias(void)
 template<class type_t>
 void CCUDACNN<type_t>::UpdateWeighAndBias(double speed)
 {
- static const type_t MIN_KERNEL_DELTA=static_cast<type_t>(1e-9);//минимальная поправка для ядер
- type_t impulse=0.9;//импульс
- type_t destroy=0.0005;//распад
+ type_t impulse=static_cast<type_t>(0.9);//импульс
+ type_t destroy=static_cast<type_t>(0.0005);//распад
+
  for(size_t n=0;n<NN_LAYER_AMOUNT;n++)
  {
   CMatrix<type_t>::Mul(dLayerWeigh[n],dLayerWeigh[n],static_cast<type_t>(speed));
@@ -1396,13 +1679,13 @@ void CCUDACNN<type_t>::UpdateWeighAndBias(double speed)
   CMatrix<type_t>::Mul(dKernelBias,dKernelBias,static_cast<type_t>(speed));
 
   CMatrix<type_t> cMatrix_DestroyWeigh=Kernel;
-  CMatrix<type_t>::Mul(cMatrix_DestroyWeigh,cMatrix_DestroyWeigh,static_cast<type_t>(speed)*destroy);
+  CMatrix<type_t>::Mul(cMatrix_DestroyWeigh,cMatrix_DestroyWeigh,static_cast<type_t>(speed*destroy));
 
   CMatrix<type_t> cMatrix_DestroyBias=KernelBias;
-  CMatrix<type_t>::Mul(cMatrix_DestroyBias,cMatrix_DestroyBias,static_cast<type_t>(speed)*destroy);
+  CMatrix<type_t>::Mul(cMatrix_DestroyBias,cMatrix_DestroyBias,static_cast<type_t>(speed*destroy));
 
-  CMatrix<type_t>::Mul(LastdKernel,LastdKernel,impulse);
-  CMatrix<type_t>::Mul(LastdKernelBias,LastdKernelBias,impulse);
+  CMatrix<type_t>::Mul(LastdKernel,LastdKernel,static_cast<type_t>(impulse));
+  CMatrix<type_t>::Mul(LastdKernelBias,LastdKernelBias,static_cast<type_t>(impulse));
 
   CMatrix<type_t>::Sub(LastdKernel,LastdKernel,dKernel);
   CMatrix<type_t>::Sub(LastdKernelBias,LastdKernelBias,dKernelBias);
@@ -1429,11 +1712,19 @@ void CCUDACNN<type_t>::UpdateWeighAndBias(double speed)
  {
   if (update_kernel(dKernelA[n],dKernelBiasA[n],LastdKernelA[n],LastdKernelBiasA[n],KernelA[n],KernelBiasA[n],speed,destroy,impulse)==false) error=false;
  }
+ if (error==true) PutMessageToConsole("ЯДРО A НЕ ОБУЧАЕТСЯ! ПОПРАВКИ БЛИЗКИ К НУЛЮ!\r\n");
+ error=true;
  for(size_t n=0;n<KERNEL_B_AMOUNT;n++)
  {
   if (update_kernel(dKernelB[n],dKernelBiasB[n],LastdKernelB[n],LastdKernelBiasB[n],KernelB[n],KernelBiasB[n],speed,destroy,impulse)==false) error=false;
  }
- if (error==true) PutMessageToConsole("ЯДРА НЕ ОБУЧАЮТСЯ! ПОПРАВКИ БЛИЗКИ К НУЛЮ!\r\n");
+ if (error==true) PutMessageToConsole("ЯДРО B НЕ ОБУЧАЕТСЯ! ПОПРАВКИ БЛИЗКИ К НУЛЮ!\r\n");
+ error=true;
+ for(size_t n=0;n<KERNEL_C_AMOUNT;n++)
+ {
+  if (update_kernel(dKernelC[n],dKernelBiasC[n],LastdKernelC[n],LastdKernelBiasC[n],KernelC[n],KernelBiasC[n],speed,destroy,impulse)==false) error=false;
+ }
+ if (error==true) PutMessageToConsole("ЯДРО C НЕ ОБУЧАЕТСЯ! ПОПРАВКИ БЛИЗКИ К НУЛЮ!\r\n");
 }
 
 
@@ -1536,45 +1827,116 @@ template<class type_t>
 void CCUDACNN<type_t>::TrainingNet(STrainingParam &sTrainingParam)
 {
  char str[STRING_BUFFER_SIZE];
-
  //начинаем обучение блоками
  size_t training_image_amount=TrainingImage.size();
  size_t validation_image_amount=ValidationImage.size();
  static const double max_cost_level=0.1;//максимальная ошибка
  static const double speed=0.01;//скорость обучения
 
- size_t new_training_image_amount=training_image_amount;
- if (ENABLE_MIRROR_TO_HORIZONTAL==true) new_training_image_amount*=2;
-
- std::vector<SItem> array_index_of_training_image(new_training_image_amount);//индексы обучающих образов
+ std::vector<SItem> array_index_of_training_image;//индексы обучающих образов
  for(size_t n=0;n<training_image_amount;n++)
  {
-  array_index_of_training_image[n].Index=n;
-  array_index_of_training_image[n].MirrorToHorizontal=false;
-
-  if (ENABLE_MIRROR_TO_HORIZONTAL==true)
-  {
-   array_index_of_training_image[n+training_image_amount].Index=n;
-   array_index_of_training_image[n+training_image_amount].MirrorToHorizontal=true;
-  }
+  SItem sItem;
+  sItem.Index=n;
+  sItem.MirrorToHorizontal=false;
+  sItem.OffsetX=0;
+  sItem.OffsetY=0;
+  array_index_of_training_image.push_back(sItem);
  }
- training_image_amount=new_training_image_amount;
-
- size_t new_validation_image_amount=validation_image_amount;
- if (ENABLE_MIRROR_TO_HORIZONTAL==true) new_validation_image_amount*=2;
- std::vector<SItem> array_index_of_validation_image(new_validation_image_amount);//индексы проверочных образов
+ std::vector<SItem> array_index_of_validation_image;//индексы проверочных образов
  for(size_t n=0;n<validation_image_amount;n++)
  {
-  array_index_of_validation_image[n].Index=n;
-  array_index_of_validation_image[n].MirrorToHorizontal=false;
+  SItem sItem;
+  sItem.Index=n;
+  sItem.MirrorToHorizontal=false;
+  sItem.OffsetX=0;
+  sItem.OffsetY=0;
+  array_index_of_validation_image.push_back(sItem);
+ }
 
-  if (ENABLE_MIRROR_TO_HORIZONTAL==true)
+ if (ENABLE_MIRROR_TO_HORIZONTAL==true)
+ {
+  size_t size;
+  size=array_index_of_training_image.size();
+  for(size_t n=0;n<size;n++)
   {
-   array_index_of_validation_image[n+validation_image_amount].Index=n;
-   array_index_of_validation_image[n+validation_image_amount].MirrorToHorizontal=true;
+   SItem sItem=array_index_of_training_image[n];
+   sItem.MirrorToHorizontal=true;
+   array_index_of_training_image.push_back(sItem);
+  }
+  size=array_index_of_validation_image.size();
+  for(size_t n=0;n<size;n++)
+  {
+   SItem sItem=array_index_of_validation_image[n];
+   sItem.MirrorToHorizontal=true;
+   array_index_of_validation_image.push_back(sItem);
   }
  }
- validation_image_amount=new_validation_image_amount;
+
+ if (true)
+ {
+  size_t size;
+  size=array_index_of_training_image.size();
+  for(size_t n=0;n<size;n++)
+  {
+   for(int32_t m=1;m<=4;m++)
+   {
+    SItem sItem=array_index_of_training_image[n];
+    sItem.OffsetX=m*10;
+    array_index_of_training_image.push_back(sItem);
+    sItem.OffsetX=-m*10;
+    array_index_of_training_image.push_back(sItem);
+   }
+  }
+  /*
+  size=array_index_of_validation_image.size();
+  for(size_t n=0;n<size;n++)
+  {
+   for(int32_t m=1;m<=3;m++)
+   {
+    SItem sItem=array_index_of_validation_image[n];
+    sItem.OffsetX=m*10;
+    array_index_of_validation_image.push_back(sItem);
+    sItem.OffsetX=-m*10;
+    array_index_of_validation_image.push_back(sItem);
+   }
+  }
+  */
+ }
+
+ if (true)
+ {
+  size_t size;
+  size=array_index_of_training_image.size();
+  for(size_t n=0;n<size;n++)
+  {
+   for(int32_t m=1;m<=4;m++)
+   {
+    SItem sItem=array_index_of_training_image[n];
+    sItem.OffsetY=m*10;
+    array_index_of_training_image.push_back(sItem);
+    sItem.OffsetY=-m*10;
+    array_index_of_training_image.push_back(sItem);
+   }
+  }
+  /*
+  size=array_index_of_validation_image.size();
+  for(size_t n=0;n<size;n++)
+  {
+   for(int32_t m=1;m<=3;m++)
+   {
+    SItem sItem=array_index_of_validation_image[n];
+    sItem.OffsetY=m*10;
+    array_index_of_validation_image.push_back(sItem);
+    sItem.OffsetY=-m*10;
+    array_index_of_validation_image.push_back(sItem);
+   }
+  }
+  */
+ }
+
+ training_image_amount=array_index_of_training_image.size();
+ validation_image_amount=array_index_of_validation_image.size();
  size_t iteration=1;
  while(1)
  {

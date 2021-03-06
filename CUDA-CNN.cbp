@@ -13,10 +13,10 @@
 				<Option compiler="nvcc" />
 				<Compiler>
 					<Add option="-std=c++11" />
-					<Add option="-ccbin=g++-5" />
-					<Add option="-arch=sm_21" />
-					<Add option="-I /usr/local/cuda-8.0/include" />
-					<Add option="-L /usr/local/cuda-8.0/lib64" />
+					<Add option="-ccbin=g++" />
+					<Add option="-arch=sm_35" />
+					<Add option="-I /usr/local/cuda-11.1/include" />
+					<Add option="-L /usr/local/cuda-11.1/lib64" />
 				</Compiler>
 			</Target>
 		</Build>
